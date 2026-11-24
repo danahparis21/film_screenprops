@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>ATLAS SOC – Cybersecurity Command Center</title>
+    <title>A Special Surprise For You 💗✨</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700;800&display=swap">
@@ -1441,11 +1441,11 @@
     <section class="scene" id="s1">
         <div class="fr">
             <div class="tb" style="display:flex;justify-content:space-between;align-items:center">
-                <span>✉ ♟ ✕</span>
+                <span>💌 For Daniel 🌸</span>
                 <button class="fs-btn" onclick="toggleFullscreen()" title="Fullscreen View">⛶ Fullscreen</button>
             </div>
             <div class="cd">
-                <h1>Can’t wait to see you</h1>
+                <h1>Can’t wait to see you 🥰</h1>
                 <svg class="cat" width="150" height="130" viewBox="0 0 150 130">
                     <path
                         d="M32 40 40 8 62 28Q75 24 88 28L110 8 118 40Q130 60 118 82Q110 100 75 100Q40 100 32 82Q20 60 32 40Z"
@@ -1462,11 +1462,11 @@
                     <circle cx="50" cy="96" r="7" fill="#fff" stroke="#222" stroke-width="3" />
                     <circle cx="100" cy="96" r="7" fill="#fff" stroke="#222" stroke-width="3" />
                 </svg>
-                <p>Tonight can’t come soon enough.<br>Tap to see what I made for <u>YOU</u> 💗</p>
-                <button class="ok" id="g1">OKAY</button>
+                <p>Tonight can’t come soon enough.<br>Tap to see what I made for <u>YOU</u> 💗✨</p>
+                <button class="ok" id="g1">OPEN MY SURPRISE 🎁</button>
                 <div id="ld"></div>
             </div>
-            <div class="ft">( made with love, M )</div>
+            <div class="ft">( made with love, M 💕 )</div>
         </div>
     </section>
 
@@ -1659,11 +1659,23 @@
             }
         }
 
+        const TITLES = {
+            s1: "A Special Surprise For You 💗✨",
+            s2: "system_probe // yeoj",
+            s3: "ATLAS SOC – Cybersecurity Command Center",
+            s4: "KAYAN Executive Workspace – Daniel Reyes",
+            s5: "ATLAS SOC – Privileged Access Logs",
+            s6: "🚨 CRITICAL INCIDENT – ATLAS SOC",
+            s7: "SOC Forensics Lab – Incident Report",
+            s8: "atlas_export.db // Transferring..."
+        };
+
         function go(id) {
             clr();
             closeIncidentModal();
             cur = id;
             document.body.className = "scene-" + id;
+            document.title = TITLES[id] || "A Special Surprise For You 💗✨";
 
             // FIRST: Display the target scene so it has real clientWidth and clientHeight!
             S.forEach(([n, s], i) => {
@@ -1728,8 +1740,8 @@
         })();
 
         $("g1").onclick = () => {
-            $("ld").textContent = "Opening your surprise…";
-            later(() => $("ld").textContent = "Verifying your device…", 1300);
+            $("ld").textContent = "Opening your surprise 💗…";
+            later(() => $("ld").textContent = "Loading our photos & memories ✨…", 1300);
         };
 
         /* ==========================================================================
