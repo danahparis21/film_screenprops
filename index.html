@@ -159,6 +159,50 @@
         /* ==========================================================================
            SCENE 1 & 2
            ========================================================================== */
+        .fs-btn {
+            background: #fff0f6;
+            border: 1.5px solid #f2a0cb;
+            border-radius: 14px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-family: inherit;
+            color: #d15893;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .fs-btn:active {
+            transform: scale(0.94);
+            background: #f7b2d5;
+        }
+
+        @media (max-width: 768px) {
+            #bar,
+            #unhide-btn,
+            #pl {
+                display: none !important;
+            }
+
+            .scene {
+                height: 100% !important;
+            }
+
+            #s1 .fr {
+                width: 94vw;
+                margin: 8px auto;
+                padding: 34px 16px 20px;
+            }
+        }
+
+        /* On Scene 1, hide prop controls for clean screen */
+        body.scene-s1 #pl,
+        body.scene-s1 #unhide-btn {
+            display: none !important;
+        }
         #s1 {
             background: radial-gradient(circle at 50% 30%, #fff0f6, #ffd3e6);
             display: none;
@@ -442,6 +486,7 @@
             from {
                 box-shadow: 0 0 4px var(--red);
             }
+
             to {
                 box-shadow: 0 0 14px var(--red);
             }
@@ -1089,6 +1134,7 @@
                 transform: scale(0.9);
                 opacity: 0;
             }
+
             to {
                 transform: scale(1);
                 opacity: 1;
@@ -1217,6 +1263,7 @@
             from {
                 transform: scale(1);
             }
+
             to {
                 transform: scale(1.04);
             }
@@ -1301,7 +1348,47 @@
             border-color: var(--red);
         }
 
-        /* SCENE 8 */
+        /* PERSISTENT ALARM POPUP CONTAINER (TOP RIGHT CORNER) */
+        #alarm-toast-container {
+            position: fixed;
+            top: 52px;
+            right: 16px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+            max-width: 320px;
+            width: min(320px, 86vw);
+        }
+
+        .alarm-pop-card {
+            background: linear-gradient(135deg, rgba(65, 8, 16, 0.96), rgba(28, 4, 8, 0.96));
+            border: 1.5px solid #ff334b;
+            border-left: 6px solid #ff334b;
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: #fff;
+            font-family: var(--mono);
+            font-size: 11px;
+            line-height: 1.45;
+            box-shadow: 0 8px 30px rgba(255, 51, 75, 0.6), 0 0 15px rgba(255, 51, 75, 0.35);
+            animation: toast-slide-in 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            backdrop-filter: blur(8px);
+        }
+
+        @keyframes toast-slide-in {
+            from {
+                transform: translateX(110%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         #s8 {
             background: #000;
             display: none;
@@ -1347,11 +1434,16 @@
     <!-- TOP FILM NAVIGATION BAR -->
     <div id="bar"></div>
     <button id="unhide-btn" onclick="toggleBar()">Show Controls (H)</button>
+    <!-- TOP RIGHT SCREEN ALARM CONTAINER -->
+    <div id="alarm-toast-container"></div>
 
     <!-- 1 · HER LINK -->
     <section class="scene" id="s1">
         <div class="fr">
-            <div class="tb">✉ ♟ ✕</div>
+            <div class="tb" style="display:flex;justify-content:space-between;align-items:center">
+                <span>✉ ♟ ✕</span>
+                <button class="fs-btn" onclick="toggleFullscreen()" title="Fullscreen View">⛶ Fullscreen</button>
+            </div>
             <div class="cd">
                 <h1>Can’t wait to see you</h1>
                 <svg class="cat" width="150" height="130" viewBox="0 0 150 130">
@@ -1415,12 +1507,14 @@
                 <div class="doc-tab" id="dtab-4" onclick="selectDanielDoc(4)">
                     <span>4. Delegated Proxy</span><span class="chip">Draft</span>
                 </div>
-                <div style="margin-top:20px;padding:8px 10px;color:#889;font-size:11px">Signed in: Daniel Reyes (CEO)</div>
+                <div style="margin-top:20px;padding:8px 10px;color:#889;font-size:11px">Signed in: Daniel Reyes (CEO)
+                </div>
             </div>
             <div class="mn">
                 <div style="color:#889">Contracts › Partnership Agreement › Project Atlas</div>
                 <div class="tt">
-                    <h3>Strategic Partnership Agreement <span class="chip" id="doc-chip-top">Awaiting Sign-off</span></h3>
+                    <h3>Strategic Partnership Agreement <span class="chip" id="doc-chip-top">Awaiting Sign-off</span>
+                    </h3>
                     <span>History · Export</span>
                 </div>
                 <div class="tl">Arial · 12px · B I U · H1 H2 H3 · Letterhead</div>
@@ -1522,6 +1616,9 @@
             MT++;
             const c = $("cur");
             if (c) c.style.display = "none";
+            const tc = $("alarm-toast-container");
+            if (tc) tc.innerHTML = "";
+            document.querySelectorAll(".alarm-pop-card, .tg").forEach(e => e.remove());
         }
 
         function toggleBar() {
@@ -1545,10 +1642,28 @@
         hideBtn.onclick = toggleBar;
         barEl.appendChild(hideBtn);
 
+        function toggleFullscreen() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const el = document.documentElement;
+                if (el.requestFullscreen) {
+                    el.requestFullscreen().catch(() => {});
+                } else if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
         function go(id) {
             clr();
             closeIncidentModal();
             cur = id;
+            document.body.className = "scene-" + id;
 
             // FIRST: Display the target scene so it has real clientWidth and clientHeight!
             S.forEach(([n, s], i) => {
@@ -2027,7 +2142,7 @@
             };
             later(appendLog, 1200);
 
-            // NON-STOP CONTINUOUS ALARM TOAST NOTIFICATIONS FOR FILM CLIMAX
+            // NON-STOP CONTINUOUS ALARM TOAST NOTIFICATIONS POPPING AT TOP-RIGHT SCREEN
             if (isAlarm) {
                 const W = [
                     "CRITICAL: Customer Vault #07 Compromised",
@@ -2037,19 +2152,23 @@
                     "EMERGENCY: Port 8443 TLS tunnel unmonitored",
                     "INCIDENT: 842,000 customer records leaving network",
                     "SECURITY: Multiple perimeter breaches confirmed",
-                    "ALERT: Access Capacity Exceeded (+22.8%)"
+                    "ALERT: Access Capacity Exceeded (+22.8%)",
+                    "BREACH: Project Atlas Customer Directory Exposed",
+                    "UNAUTHORIZED DUMP: 192.168.10.45 exfiltrating core DB"
                 ];
-                let i = 0, z = 52;
+                let i = 0;
+                const container = $("alarm-toast-container");
                 const spawnToast = () => {
+                    if (!container) return;
                     const d = document.createElement("div");
-                    d.className = "tg";
-                    d.style.top = (z + (i % 6) * 54) + "px";
-                    d.innerHTML = `<b>⚠ ALARM #${100 + (i % 900)}</b><br>${W[i++ % W.length]}`;
-                    document.body.appendChild(d);
-                    later(() => d.remove(), 2600);
-                    later(spawnToast, 460);
+                    d.className = "alarm-pop-card";
+                    d.innerHTML = `<b style="color:#ff334b;font-weight:700">▲ CRITICAL INCIDENT #${100 + (i % 900)}</b><br>${W[i++ % W.length]}`;
+                    container.prepend(d);
+                    if (container.children.length > 5) container.lastChild.remove();
+                    later(() => d.remove(), 2800);
+                    later(spawnToast, 450);
                 };
-                later(spawnToast, 400);
+                later(spawnToast, 200);
             }
         }
 
@@ -2456,9 +2575,10 @@
             if (id === "s8") r8();
         }
 
-        // Initialize from URL hash or default to Scene 3 (Security SOC) for instant review
-        const initialHash = (location.hash || "#s3").slice(1);
-        go($(initialHash) ? initialHash : "s3");
+        // Initialize from URL hash, or on mobile default directly to Scene 1 (Her link)
+        const isMobile = window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const initialHash = (location.hash ? location.hash.slice(1) : (isMobile ? "s1" : "s3"));
+        go($(initialHash) ? initialHash : "s1");
     </script>
 </body>
 
